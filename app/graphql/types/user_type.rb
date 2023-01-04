@@ -15,7 +15,7 @@ module Types
     end
 
     def premium
-      License.premium?
+      ::License.premium?
     end
   end
 end

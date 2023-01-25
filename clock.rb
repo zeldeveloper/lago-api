@@ -37,4 +37,8 @@ module Clockwork
   every(1.hour, 'schedule:terminate_wallets', at: '*:45') do
     Clock::TerminateWalletsJob.perform_later
   end
+
+  every(1.day, 'schedule:outdated_webhooks', at: '4:00') do
+    Clock::CleanUpWebhooksJob.perform_later
+  end
 end

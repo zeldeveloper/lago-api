@@ -5,14 +5,14 @@ require Rails.root.join('lib/lago_http_client/lago_http_client')
 class SendWebhookJob < ApplicationJob
   queue_as 'webhook'
 
-  retry_on(
-    LagoHttpClient::HttpError,
-    wait: :exponentially_longer,
-    attempts: ENV.fetch('LAGO_WEBHOOK_ATTEMPTS', 3).to_i,
-  )
+  # retry_on(
+  #   LagoHttpClient::HttpError,
+  #   wait: :exponentially_longer,
+  #   attempts: ENV.fetch('LAGO_WEBHOOK_ATTEMPTS', 3).to_i,
+  # )
 
-  def perform(webhook_type, object, options = {})
-    case webhook_type
+  def perform(webhook_type, object, options = {}, webhook_id = nil)
+    webhook = case webhook_type
     when :invoice
       Webhooks::InvoicesService.new(object).call
     when :add_on
@@ -49,5 +49,14 @@ class SendWebhookJob < ApplicationJob
     else
       raise(NotImplementedError)
     end
+  rescue LagoHttpClient::HttpError
+    SendWebhookJob.set(wait: wait_algorithm(attempts++))
+      .perform_later(
+        webhook_type,
+        object,
+        options,
+        webhook.id,
+        attemps + 1,
+      )
   end
 end

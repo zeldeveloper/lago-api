@@ -12,51 +12,44 @@ class SendWebhookJob < ApplicationJob
   # )
 
   def perform(webhook_type, object, options = {}, webhook_id = nil)
-    webhook = case webhook_type
-    when :invoice
-      Webhooks::InvoicesService.new(object).call
-    when :add_on
-      Webhooks::AddOnService.new(object).call
-    when :credit
-      Webhooks::PaidCreditService.new(object).call
-    when :event
-      Webhooks::EventService.new(object).call
+    webhook_class = case webhook_type
+                    when :invoice
+                      Webhooks::InvoicesService
+                    when :add_on
+                      Webhooks::AddOnService
+                    when :credit
+                      Webhooks::PaidCreditService
+                    when :event
+                      Webhooks::EventService
 
-    # NOTE: Payment provider related webhooks
-    when :payment_provider_invoice_payment_error
-      Webhooks::PaymentProviders::InvoicePaymentFailureService.new(object, options).call
-    when :payment_provider_customer_created
-      Webhooks::PaymentProviders::CustomerCreatedService.new(object).call
-    when :payment_provider_customer_error
-      Webhooks::PaymentProviders::CustomerErrorService.new(object, options).call
-    when :payment_provider_customer_checkout_url
-      Webhooks::PaymentProviders::CustomerCheckoutService.new(object, options).call
+                    # NOTE: Payment provider related webhooks
+                    when :payment_provider_invoice_payment_error
+                      Webhooks::PaymentProviders::InvoicePaymentFailureService
+                    when :payment_provider_customer_created
+                      Webhooks::PaymentProviders::CustomerCreatedService
+                    when :payment_provider_customer_error
+                      Webhooks::PaymentProviders::CustomerErrorService
+                    when :payment_provider_customer_checkout_url
+                      Webhooks::PaymentProviders::CustomerCheckoutService
 
-    # NOTE: This add the new way of managing webhooks
-    # A refact has to be done to improve webhooks management internally
-    when 'credit_note.created'
-      Webhooks::CreditNotes::CreatedService.new(object).call
-    when 'credit_note.generated'
-      Webhooks::CreditNotes::GeneratedService.new(object).call
-    when 'credit_note.provider_refund_failure'
-      Webhooks::CreditNotes::PaymentProviderRefundFailureService.new(object, options).call
-    when 'invoice.generated'
-      Webhooks::Invoices::GeneratedService.new(object).call
-    when 'invoice.drafted'
-      Webhooks::Invoices::DraftedService.new(object).call
-    when 'subscription.terminated'
-      Webhooks::Subscriptions::TerminatedService.new(object).call
-    else
-      raise(NotImplementedError)
+                    # NOTE: This add the new way of managing webhooks
+                    # A refact has to be done to improve webhooks management internally
+                    when 'credit_note.created'
+                      Webhooks::CreditNotes::CreatedService
+                    when 'credit_note.generated'
+                      Webhooks::CreditNotes::GeneratedService
+                    when 'credit_note.provider_refund_failure'
+                      Webhooks::CreditNotes::PaymentProviderRefundFailureService
+                    when 'invoice.generated'
+                      Webhooks::Invoices::GeneratedService
+                    when 'invoice.drafted'
+                      Webhooks::Invoices::DraftedService
+                    when 'subscription.terminated'
+                      Webhooks::Subscriptions::TerminatedService
+                    else
+                      raise(NotImplementedError)
     end
-  rescue LagoHttpClient::HttpError
-    SendWebhookJob.set(wait: wait_algorithm(attempts++))
-      .perform_later(
-        webhook_type,
-        object,
-        options,
-        webhook.id,
-        attemps + 1,
-      )
+
+    webhook_class.new(object:, webhook_id:, options:).call
   end
 end

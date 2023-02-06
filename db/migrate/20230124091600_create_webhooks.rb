@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateWebhooks < ActiveRecord::Migration[7.0]
   def change
     create_table :webhooks, id: :uuid do |t|
@@ -8,9 +10,10 @@ class CreateWebhooks < ActiveRecord::Migration[7.0]
 
       t.integer :retries, default: 0
       t.integer :status, default: 0
+      t.integer :http_status
 
       t.string :webhook_type
-      
+
       t.string :endpoint
       t.json :payload
       t.json :response

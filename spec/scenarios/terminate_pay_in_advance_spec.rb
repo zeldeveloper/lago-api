@@ -37,8 +37,7 @@ describe 'Terminate Pay in Advance Scenarios', :scenarios, type: :request do
       expect(term_invoice.total_amount_cents).to eq(0)
 
       credit_note = sub_invoice.credit_notes.first
-      # TODO: Address rounding issue here as expected amount with VAT is 4286.
-      expect(credit_note.total_amount_cents).to eq(4287) # 60.0 / 28 * 20
+      expect(credit_note.total_amount_cents).to eq(4286) # 60.0 / 28 * 20
     end
   end
 
@@ -74,8 +73,7 @@ describe 'Terminate Pay in Advance Scenarios', :scenarios, type: :request do
         expect(term_invoice.total_amount_cents).to eq(0)
 
         credit_note = sub_invoice.credit_notes.first
-        # TODO: Address rounding issue here as expected amount with VAT is 4286.
-        expect(credit_note.total_amount_cents).to eq(4287) # 60.0 / 28 * 20
+        expect(credit_note.total_amount_cents).to eq(4286) # 60.0 / 28 * 20
       end
     end
   end
@@ -112,8 +110,7 @@ describe 'Terminate Pay in Advance Scenarios', :scenarios, type: :request do
         expect(term_invoice.total_amount_cents).to eq(0)
 
         credit_note = sub_invoice.credit_notes.first
-        # TODO: Address rounding issue here as expected amount with VAT is 4500.
-        expect(credit_note.total_amount_cents).to eq(4502) # 60.0 / 28 * 21
+        expect(credit_note.total_amount_cents).to eq(4500) # 60.0 / 28 * 21
       end
     end
   end
@@ -149,8 +146,7 @@ describe 'Terminate Pay in Advance Scenarios', :scenarios, type: :request do
         expect(term_invoice.total_amount_cents).to eq(0)
 
         credit_note = sub_invoice.credit_notes.first
-        # TODO: Address rounding issue here as expected amount with VAT is 5786.
-        expect(credit_note.total_amount_cents).to eq(5787) # 60.0 / 28 * 27
+        expect(credit_note.total_amount_cents).to eq(5786) # 60.0 / 28 * 27
       end
     end
 
@@ -187,8 +183,7 @@ describe 'Terminate Pay in Advance Scenarios', :scenarios, type: :request do
           expect(term_invoice.total_amount_cents).to eq(0)
 
           credit_note = sub_invoice.credit_notes.first
-          # TODO: Address rounding issue here as expected amount with VAT is 5786.
-          expect(credit_note.total_amount_cents).to eq(5787) # 60.0 / 28 * 27
+          expect(credit_note.total_amount_cents).to eq(5786) # 60.0 / 28 * 27
         end
       end
     end
@@ -226,8 +221,7 @@ describe 'Terminate Pay in Advance Scenarios', :scenarios, type: :request do
           expect(term_invoice.total_amount_cents).to eq(0)
 
           credit_note = sub_invoice.credit_notes.first
-          # TODO: Address rounding issue here as expected amount with VAT is 5786.
-          expect(credit_note.total_amount_cents).to eq(5787) # 60.0 / 28 * 27
+          expect(credit_note.total_amount_cents).to eq(5786) # 60.0 / 28 * 27
         end
       end
     end

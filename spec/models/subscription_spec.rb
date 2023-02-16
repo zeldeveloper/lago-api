@@ -3,16 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe Subscription, type: :model do
+  subject(:subscription) { create(:active_subscription, plan:) }
+  let(:plan) { create(:plan) }
+
+  it_behaves_like 'paper_trail traceable'
+
   describe '#upgraded?' do
     let(:previous_subscription) { nil }
-    let(:plan) { create(:plan) }
-
     let(:subscription) do
-      create(
-        :subscription,
-        previous_subscription: previous_subscription,
-        plan: plan,
-      )
+      create(:subscription, previous_subscription:, plan:)
     end
 
     context 'without next subscription' do
@@ -53,11 +52,7 @@ RSpec.describe Subscription, type: :model do
     let(:plan) { create(:plan, amount_cents: 100) }
 
     let(:subscription) do
-      create(
-        :subscription,
-        previous_subscription: previous_subscription,
-        plan: plan,
-      )
+      create(:subscription, previous_subscription:, plan:)
     end
 
     context 'without next subscription' do
@@ -95,7 +90,6 @@ RSpec.describe Subscription, type: :model do
 
   describe '#trial_end_date' do
     let(:plan) { create(:plan, trial_period: 3) }
-    let(:subscription) { create(:active_subscription, plan: plan) }
 
     it 'returns the trial end date' do
       trial_end_date = subscription.trial_end_date
@@ -118,9 +112,9 @@ RSpec.describe Subscription, type: :model do
       let(:subscription) do
         create(
           :active_subscription,
-          previous_subscription: previous_subscription,
+          previous_subscription:,
           started_at: Time.zone.yesterday,
-          plan: plan,
+          plan:,
           external_id: 'sub_id',
           customer: previous_subscription.customer,
         )
@@ -145,10 +139,10 @@ RSpec.describe Subscription, type: :model do
     let(:subscription) do
       create(
         :subscription,
-        previous_subscription: previous_subscription,
+        previous_subscription:,
         started_at: Time.zone.yesterday,
         external_id: 'sub_id',
-        customer: customer,
+        customer:,
       )
     end
 
@@ -165,7 +159,7 @@ RSpec.describe Subscription, type: :model do
           started_at: Time.current.last_month,
           status: :terminated,
           external_id: 'sub_id',
-          customer: customer,
+          customer:,
         )
       end
 
@@ -181,7 +175,7 @@ RSpec.describe Subscription, type: :model do
           previous_subscription: initial_subscription,
           started_at: Time.zone.yesterday,
           external_id: 'sub_id',
-          customer: customer,
+          customer:,
           status: :terminated,
         )
       end
@@ -192,7 +186,7 @@ RSpec.describe Subscription, type: :model do
           started_at: Time.current.last_year,
           external_id: 'sub_id',
           status: :terminated,
-          customer: customer,
+          customer:,
         )
       end
 
@@ -204,23 +198,22 @@ RSpec.describe Subscription, type: :model do
 
   describe '#valid_external_id' do
     let(:organization) { create(:organization) }
-    let(:customer) { create(:customer, organization: organization) }
-    let(:plan) { create(:plan) }
+    let(:customer) { create(:customer, organization:) }
     let(:external_id) { SecureRandom.uuid }
     let(:subscription) do
       create(
         :active_subscription,
-        plan: plan,
-        customer: create(:customer, organization: organization),
+        plan:,
+        customer: create(:customer, organization:),
       )
     end
 
     let(:new_subscription) do
       build(
         :active_subscription,
-        plan: plan,
-        external_id: external_id,
-        customer: create(:customer, organization: organization),
+        plan:,
+        external_id:,
+        customer: create(:customer, organization:),
       )
     end
 
@@ -295,7 +288,7 @@ RSpec.describe Subscription, type: :model do
   end
 
   describe '#display_name' do
-    let(:subscription) { build(:subscription, name: subscription_name, plan: plan) }
+    let(:subscription) { build(:subscription, name: subscription_name, plan:) }
     let(:subscription_name) { 'some_name' }
     let(:plan) { create(:plan, name: 'some_plan_name') }
 

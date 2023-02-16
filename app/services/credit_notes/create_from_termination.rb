@@ -12,7 +12,9 @@ module CreditNotes
     def call
       return result if (last_subscription_fee&.amount_cents || 0).zero?
 
+
       amount = compute_amount
+      binding.break
       return result unless amount.positive?
 
       # NOTE: if credit notes were already issued on the fee,

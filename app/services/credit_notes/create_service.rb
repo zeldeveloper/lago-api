@@ -40,7 +40,6 @@ module CreditNotes
           credit_status: 'available',
           status: invoice.status,
         )
-
         create_items
         return result unless result.success?
 

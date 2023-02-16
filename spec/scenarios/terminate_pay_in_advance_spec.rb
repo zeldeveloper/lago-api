@@ -25,6 +25,7 @@ describe 'Terminate Pay in Advance Scenarios', :scenarios, type: :request do
 
       subscription = customer.subscriptions.find_by(external_id: customer.external_id)
       sub_invoice = subscription.invoices.first
+      binding.break
       expect(sub_invoice.total_amount_cents).to eq(4500) # 60 / 28 * 21
 
       expect {

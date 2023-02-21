@@ -40,5 +40,6 @@ module Clockwork
 
   every(1.day, 'schedule:clean_webhooks', at: '01:00') do
     Clock::WebhooksCleanupJob.perform_later
+    Clock::VersionsCleanupJob.perform_later
   end
 end
